@@ -1,6 +1,11 @@
 #!/bin/bash
 # Script para verificar la salud de discos
-# Uso: ./disk_health.sh [dispositivo]
+# Uso: ./storage_health.sh [dispositivo]
+
+# Obtener el directorio donde está el script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_DIR="$SCRIPT_DIR/server_logs/disk_health"
+LOG_FILE="$LOG_DIR/disk_health_$(date +%Y%m%d_%H%M%S).log"
 
 # Función para verificar e instalar smartctl
 check_smartctl() {
@@ -86,8 +91,16 @@ list_disks() {
 
 # Función principal
 main() {
+    # Crear directorio de logs si no existe
+    mkdir -p "$LOG_DIR"
+    
+    # Redirigir la salida tanto al archivo de log como a la consola
+    exec > >(tee "$LOG_FILE")
+    exec 2>&1
+    
     echo "🔧 Verificador de Salud de Discos"
     echo "=================================="
+    echo "Log guardado en: $LOG_FILE"
     echo ""
     
     # Verificar e instalar smartctl
