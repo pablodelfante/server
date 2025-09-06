@@ -2,7 +2,9 @@
 # Define los directorios a sincronizar
 SOURCE_DIR="$HOME/Documents"
 DEST_DIR="/mnt/backups"
-LOG_DIR="$HOME/Documents/server_logs"
+# Obtener el directorio donde está el script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_DIR="$SCRIPT_DIR/server_logs"
 LOG_FILE="$LOG_DIR/sync_$(date +%Y%m%d_%H%M%S).log"
 
 
@@ -23,8 +25,8 @@ mkdir -p "$LOG_DIR"
 exec > >(tee "$LOG_FILE")
 exec 2>&1
 
-# Sincroniza los directorios con rsync sin borrar archivos en el destino
-echo "Sincronizando $SOURCE_DIR a $DEST_DIR (sin borrar archivos en el destino)..."
+# Sincroniza los directorios con rsync 
+echo "Sincronizando $SOURCE_DIR a $DEST_DIR"
 rsync -av --progress --stats --delete "$SOURCE_DIR/" "$DEST_DIR/"
 
 # Verifica si rsync falló
