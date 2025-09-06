@@ -5,12 +5,6 @@ DEST_DIR="/mnt/backups"
 LOG_DIR="$HOME/Documents/server_logs"
 LOG_FILE="$LOG_DIR/sync_$(date +%Y%m%d_%H%M%S).log"
 
-# Crear directorio de logs si no existe
-mkdir -p "$LOG_DIR"
-
-# Redirigir la salida tanto al archivo de log como a la consola
-exec > >(tee "$LOG_FILE")
-exec 2>&1
 
 # Asegúrate de que los directorios existan
 if [ ! -d "$SOURCE_DIR" ]; then
@@ -21,6 +15,13 @@ if [ ! -d "$DEST_DIR" ]; then
     echo "Error: El directorio de destino no existe ($DEST_DIR)."
     exit 1
 fi
+
+# Crear directorio de logs si no existe
+mkdir -p "$LOG_DIR"
+
+# Redirigir la salida tanto al archivo de log como a la consola
+exec > >(tee "$LOG_FILE")
+exec 2>&1
 
 # Sincroniza los directorios con rsync sin borrar archivos en el destino
 echo "Sincronizando $SOURCE_DIR a $DEST_DIR (sin borrar archivos en el destino)..."
